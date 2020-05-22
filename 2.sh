@@ -100,3 +100,4 @@ sed -i 's|$BIN/v-check-vesta-license|#$BIN/v-check-vesta-license|' /usr/local/ve
 echo "Fix VESTACP-FileManager successfully"
 
 echo "Full installation completed"
+
