@@ -54,7 +54,8 @@ echo "Fix MYSQL successfully"
 
 yum install ffmpeg ffmpeg-devel nano mc htop atop iftop lsof bzip2 traceroute gdisk php74-php-curl php74-php-mbstring  php74-php-xml php74-php-gd php74-php-fileinfo php74-php-exif php74-php-intl php74-php-zip php74-php-mysqli php74-php-curl php74-php-ctype php74-php-openssl php74-php-pdo php74-php-opcache php74-php-simplexml php74-php-mysql php72-php-mbstring php72-php-xml php72-php-gd php72-php-fileinfo php72-php-intl php72-php-zip php72-php-mysqli php72-php-curl php72-php-ctype php72-php-openssl php72-php-pdo php72-php-exif php72-php-opcache php72-php-simplexml php72-php-mysql php72-php-curl php74-php-xdebug php73-php-xdebug php72-php-xdebug php70-php-xdebug php72-php-soap php73-php-soap php74-php-soap -y &> /dev/null
 
-wget https://raw.githubusercontent.com/Skamasle/sk-php-selector/master/sk-php-selector2.sh && chmod +x sk-php-selector2.sh && bash sk-php-selector2.sh php70 php71 php72 php73 &> /dev/null
+wget https://raw.githubusercontent.com/Skamasle/sk-php-selector/master/sk-php-selector2.sh &> /dev/null
+chmod +x sk-php-selector2.sh && bash sk-php-selector2.sh php70 php71 php72 php73 &> /dev/null
 
 cat >>/etc/httpd/conf.d/fcgid.conf << HERE 
 FcgidBusyTimeout 72000
@@ -65,14 +66,70 @@ FcgidMaxRequestLen 320000000000
 HERE
 
 cat >>/etc/php.ini << HERE 
-output_buffering = 4096
+file_uploads = On
+allow_url_fopen = On
+post_max_size = 2024M
+upload_max_filesize = 2024M
+output_buffering = Off
+max_execution_time = 6000
+max_input_vars = 3000
+max_input_time = 6000
 zlib.output_compression = Off
-max_execution_time = 1800
-max_input_time = 1800
-memory_limit = 2048M
-post_max_size = 2000M
-upload_max_filesize = 4048M
+memory_limit = 1000M
 HERE
+
+cat >>/etc/opt/remi/php70/php.ini << HERE 
+file_uploads = On
+allow_url_fopen = On
+post_max_size = 2024M
+upload_max_filesize = 2024M
+output_buffering = Off
+max_execution_time = 6000
+max_input_vars = 3000
+max_input_time = 6000
+zlib.output_compression = Off
+memory_limit = 1000M
+HERE
+
+cat >>/etc/opt/remi/php71/php.ini << HERE 
+file_uploads = On
+allow_url_fopen = On
+post_max_size = 2024M
+upload_max_filesize = 2024M
+output_buffering = Off
+max_execution_time = 6000
+max_input_vars = 3000
+max_input_time = 6000
+zlib.output_compression = Off
+memory_limit = 1000M
+HERE
+
+cat >>/etc/opt/remi/php72/php.ini << HERE 
+file_uploads = On
+allow_url_fopen = On
+post_max_size = 2024M
+upload_max_filesize = 2024M
+output_buffering = Off
+max_execution_time = 6000
+max_input_vars = 3000
+max_input_time = 6000
+zlib.output_compression = Off
+memory_limit = 1000M
+HERE
+
+cat >>/etc/opt/remi/php73/php.ini << HERE 
+file_uploads = On
+allow_url_fopen = On
+post_max_size = 2024M
+upload_max_filesize = 2024M
+output_buffering = Off
+max_execution_time = 6000
+max_input_vars = 3000
+max_input_time = 6000
+zlib.output_compression = Off
+memory_limit = 1000M
+HERE
+
 systemctl restart httpd 1>/dev/null
 echo "Fix PHP and HTTPD successfully"
 
@@ -99,5 +156,9 @@ sed -i 's|$BIN/v-check-vesta-license|#$BIN/v-check-vesta-license|' /usr/local/ve
 
 echo "Fix VESTACP-FileManager successfully"
 
-echo "Full installation completed"
+rpm -Uvh http://www.city-fan.org/ftp/contrib/yum-repo/rhel7/x86_64/city-fan.org-release-2-1.rhel7.noarch.rpm -y 1>/dev/null
+yum -y --enablerepo=city-fan.org install libcurl libcurl-devel -y 1>/dev/null
+yum -y group install 'Development Tools' -y 1>/dev/null
+yum  install perl-core zlib-devel -y 1>/dev/null
 
+echo "Full installation completed [ OK ]"
