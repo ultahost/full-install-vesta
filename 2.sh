@@ -54,8 +54,12 @@ echo "Fix MYSQL successfully"
 
 yum install ffmpeg ffmpeg-devel nano mc htop atop iftop lsof bzip2 traceroute gdisk php74-php-curl php74-php-mbstring  php74-php-xml php74-php-gd php74-php-fileinfo php74-php-exif php74-php-intl php74-php-zip php74-php-mysqli php74-php-curl php74-php-ctype php74-php-openssl php74-php-pdo php74-php-opcache php74-php-simplexml php74-php-mysql php72-php-mbstring php72-php-xml php72-php-gd php72-php-fileinfo php72-php-intl php72-php-zip php72-php-mysqli php72-php-curl php72-php-ctype php72-php-openssl php72-php-pdo php72-php-exif php72-php-opcache php72-php-simplexml php72-php-mysql php72-php-curl php74-php-xdebug php73-php-xdebug php72-php-xdebug php70-php-xdebug php72-php-soap php73-php-soap php74-php-soap -y &> /dev/null
 
-wget https://raw.githubusercontent.com/Skamasle/sk-php-selector/master/sk-php-selector2.sh &> /dev/null
+wget https://raw.githubusercontent.com/it-toppp/sk-php-selector/master/sk-php-selector2.sh &> /dev/null
 chmod +x sk-php-selector2.sh && bash sk-php-selector2.sh php70 php71 php72 php73 &> /dev/null
+
+wget http://downloads2.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz
+tar zxf ioncube_loaders_lin_x86-64.tar.gz 
+mv ioncube /usr/local 
 
 cat >>/etc/httpd/conf.d/fcgid.conf << HERE 
 FcgidBusyTimeout 72000
@@ -76,6 +80,9 @@ max_input_vars = 3000
 max_input_time = 6000
 zlib.output_compression = Off
 memory_limit = 1000M
+[Zend Modules]
+zend_extension = /usr/local/ioncube/ioncube_loader_lin_7.4.so
+zend_extension_ts = /usr/local/ioncube/ioncube_loader_lin_7.4_ts.so
 HERE
 
 cat >>/etc/opt/remi/php70/php.ini << HERE 
@@ -89,6 +96,9 @@ max_input_vars = 3000
 max_input_time = 6000
 zlib.output_compression = Off
 memory_limit = 1000M
+[Zend Modules]
+zend_extension = /usr/local/ioncube/ioncube_loader_lin_7.0.so
+zend_extension_ts = /usr/local/ioncube/ioncube_loader_lin_7.0_ts.so
 HERE
 
 cat >>/etc/opt/remi/php71/php.ini << HERE 
@@ -102,6 +112,9 @@ max_input_vars = 3000
 max_input_time = 6000
 zlib.output_compression = Off
 memory_limit = 1000M
+[Zend Modules]
+zend_extension = /usr/local/ioncube/ioncube_loader_lin_7.1.so
+zend_extension_ts = /usr/local/ioncube/ioncube_loader_lin_7.1_ts.so
 HERE
 
 cat >>/etc/opt/remi/php72/php.ini << HERE 
@@ -115,6 +128,9 @@ max_input_vars = 3000
 max_input_time = 6000
 zlib.output_compression = Off
 memory_limit = 1000M
+[Zend Modules]
+zend_extension = /usr/local/ioncube/ioncube_loader_lin_7.2.so
+zend_extension_ts = /usr/local/ioncube/ioncube_loader_lin_7.2_ts.so
 HERE
 
 cat >>/etc/opt/remi/php73/php.ini << HERE 
@@ -128,7 +144,11 @@ max_input_vars = 3000
 max_input_time = 6000
 zlib.output_compression = Off
 memory_limit = 1000M
+[Zend Modules]
+zend_extension = /usr/local/ioncube/ioncube_loader_lin_7.3.so
+zend_extension_ts = /usr/local/ioncube/ioncube_loader_lin_7.3_ts.so
 HERE
+
 
 systemctl restart httpd 1>/dev/null
 echo "Fix PHP and HTTPD successfully"
@@ -167,3 +187,51 @@ HERE
 yum install curl -y 1>/dev/null
 
 echo "Full installation completed [ OK ]"
+
+
+DOMAIN=$(ls /home/admin/web)
+echo "Which script use?"
+echo "   1) PLAYTUBE"
+echo "   2) WOWONDER"
+echo "   3) DEEPSOUND"
+echo "   4) QUICKDATE"
+echo "   5) PIXELPHOTO"
+    read -p "Protocol [1]: " script
+    until [[ -z "$script" || "$script" =~ ^[12345]$ ]]; do
+echo "$script: invalid selection."
+read -p "Script [1]: " script
+    done
+    case "$script" in
+1|"")
+cd /home/admin/web/$DOMAIN/public_html/ && wget http://ss.ultahost.com/playtube.zip
+rm -Rfv robots.txt index.html && unzip playtube.zip && rm -Rfv __MACOSX playtube.zip
+chmod -R 777 config.php upload assets/import/ffmpeg/ffmpeg && chown -R admin:admin /home/admin/web
+echo "  installation complete"
+;;
+2)
+cd /home/admin/web/$DOMAIN/public_html/
+wget http://ss.ultahost.com/wowonder.zip && rm -Rfv robots.txt index.html && unzip wowonder.zip
+rm -Rfv __MACOSX wowonder.zip && chmod -R 777 cache upload config.php && chown -R admin:admin /home/admin/web
+echo "  installation complete"
+;;
+3)
+cd /home/admin/web/$DOMAIN/public_html/ && wget http://ss.ultahost.com/deepsound.zip
+rm -Rfv robots.txt index.html && unzip deepsound.zip && rm -Rfv __MACOSX deepsound.zip  
+chmod -R 777 upload config.php ffmpeg/ffmpeg && chown -R admin:admin /home/admin/web
+echo "  installation complete"
+;;
+4)
+cd /home/admin/web/$DOMAIN/public_html/ && wget http://ss.ultahost.com/quickdate.zip 
+rm -Rfv robots.txt index.html unzip quickdate.zip && rm -Rfv __MACOSX quickdate.zip 
+chmod -R 777 upload cache config.php ffmpeg/ffmpeg 
+chown -R admin:admin /home/admin/web
+echo "  installation complete"
+;;
+5)
+cd /home/admin/web/$DOMAIN/public_html/
+wget http://ss.ultahost.com/pixelphoto.zip
+rm -Rfv robots.txt index.html && unzip pixelphoto.zip && rm -Rfv __MACOSX pixelphoto.zip 
+chmod -R 777 config.php sys/ffmpeg/ffmpeg ffmpeg/ffmpeg && chown -R admin:admin /home/admin/web
+echo "  installation complete"
+;;
+esac
